@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Rainbow Shapes Wallpaper</title>
+    <title>blainekyle.github.io</title>
     <style>
         body {
             margin: 0;
@@ -48,18 +48,18 @@
         const PARTICLE_COUNT_MOUSE = 5;
         const PARTICLE_LIFESPAN_MOUSE = 216; 
         const PARTICLE_SPEED_MOUSE_MULTIPLIER = 0.2; 
-        const PARTICLE_LIFESPAN_IDLE_RANDOM = 200; // Shorter life for random ones, shapes will get new life
-        const PARTICLE_BASE_SIZE = 4; // Slightly smaller base size
+        const PARTICLE_LIFESPAN_IDLE_RANDOM = 200;
+        const PARTICLE_BASE_SIZE = 4;
         const MOUSE_INACTIVITY_TIMEOUT = 4000; // ms
-        const IDLE_DROPLET_SPAWN_INTERVAL = 70; // ms (more frequent for more particles)
+        const IDLE_DROPLET_SPAWN_INTERVAL = 70; // ms
         
         const SHAPE_FORMATION_DELAY = 4000; // ms after idle starts
-        const NUM_SHAPES_TO_FORM = 10; // Number of shapes to attempt to form
-        const PARTICLES_PER_SHAPE_TARGET = 40; // Target particles per shape
-        const SHAPE_LIFESPAN_MULTIPLIER = 4.0; // Lifespan for shape particles
-        const SPARKLE_CHANCE_SHAPE = 0.3; // Sparkle chance for shape particles
+        const NUM_SHAPES_TO_FORM = 10;
+        const PARTICLES_PER_SHAPE_TARGET = 40;
+        const SHAPE_LIFESPAN_MULTIPLIER = 5.0; // Increased lifespan for a slower fade after disintegration
+        const SPARKLE_CHANCE_SHAPE = 0.3;
 
-        const SHAPE_SCALE = 1.5; // Scale for drawing shapes
+        const SHAPE_SCALE = 1.5;
         const SHAPE_SLOW_SPIN_DURATION = 300; // frames (5s at 60fps)
         const SHAPE_FAST_SPIN_DURATION = 180; // frames (3s at 60fps)
         const SHAPE_SPIN_SPEED_SLOW = 0.005; // radians per frame
@@ -67,8 +67,8 @@
         const SHAPE_DISINTEGRATE_SPEED = 1.5;
 
         // --- Global State ---
-        let particles = []; // All active particles
-        let activeShapes = []; // Stores active shape objects
+        let particles = [];
+        let activeShapes = [];
         let hue = 0;
         let mouseX = width / 2;
         let mouseY = height / 2;
@@ -79,40 +79,15 @@
 
         // --- Basic Shape Definitions (centered at 0,0) ---
         const basicShapeTemplates = [
-            { // Triangle
-                name: 'triangle',
-                points: [{x: 0, y: -15}, {x: 13, y: 7.5}, {x: -13, y: 7.5}]
-            },
-            { // Square
-                name: 'square',
-                points: [{x: -10, y: -10}, {x: 10, y: -10}, {x: 10, y: 10}, {x: -10, y: 10}]
-            },
-            { // Circle (8-point approximation)
-                name: 'circle',
-                points: [
-                    {x:0,y:-12},{x:8.5,y:-8.5},{x:12,y:0},{x:8.5,y:8.5},
-                    {x:0,y:12},{x:-8.5,y:8.5},{x:-12,y:0},{x:-8.5,y:-8.5}
-                ]
-            },
-            { // Cross
-                name: 'cross',
-                points: [
-                    {x: -3, y: -10}, {x: 3, y: -10}, {x: 3, y: -3}, {x: 10, y: -3}, 
-                    {x: 10, y: 3}, {x: 3, y: 3}, {x: 3, y: 10}, {x: -3, y: 10}, 
-                    {x: -3, y: 3}, {x: -10, y: 3}, {x: -10, y: -3}, {x: -3, y: -3}
-                ]
-            },
-            { // Simple Star (5 points)
-                name: 'star',
-                points: [
-                    {x: 0, y: -15}, {x: 4.4, y: -4.6}, {x: 14.3, y: -4.6}, {x: 7, y: 2.3},
-                    {x: 8.8, y: 12.1}, {x: 0, y: 7.5}, {x: -8.8, y: 12.1}, {x: -7, y: 2.3},
-                    {x: -14.3, y: -4.6}, {x: -4.4, y: -4.6}
-                ]
-            }
+            { name: 'triangle', points: [{x: 0, y: -15}, {x: 13, y: 7.5}, {x: -13, y: 7.5}] },
+            { name: 'square', points: [{x: -10, y: -10}, {x: 10, y: -10}, {x: 10, y: 10}, {x: -10, y: 10}] },
+            { name: 'circle', points: [{x:0,y:-12},{x:8.5,y:-8.5},{x:12,y:0},{x:8.5,y:8.5},{x:0,y:12},{x:-8.5,y:8.5},{x:-12,y:0},{x:-8.5,y:-8.5}] },
+            { name: 'cross', points: [{x: -3, y: -10}, {x: 3, y: -10}, {x: 3, y: -3}, {x: 10, y: -3}, {x: 10, y: 3}, {x: 3, y: 3}, {x: 3, y: 10}, {x: -3, y: 10}, {x: -3, y: 3}, {x: -10, y: 3}, {x: -10, y: -3}, {x: -3, y: -3}] },
+            { name: 'star', points: [{x: 0, y: -15}, {x: 4.4, y: -4.6}, {x: 14.3, y: -4.6}, {x: 7, y: 2.3}, {x: 8.8, y: 12.1}, {x: 0, y: 7.5}, {x: -8.8, y: 12.1}, {x: -7, y: 2.3}, {x: -14.3, y: -4.6}, {x: -4.4, y: -4.6}] }
         ];
 
         // --- Utility: Show custom message ---
+        // Kept for potential debugging, but not called on load.
         function showMessage(message, duration = 3000) {
             const alertBox = document.getElementById('customAlertBox');
             if (alertBox) {
@@ -130,17 +105,17 @@
                 this.size = Math.random() * size + PARTICLE_BASE_SIZE / 2;
                 this.initialSize = this.size;
                 this.color = {...color}; 
-                this.type = type; // 'mouse', 'idle_random', 'shape_forming', 'shape_active'
+                this.type = type;
                 this.opacity = 1;
                 this.isSparkle = false;
                 this.sparkleSeed = Math.random() * 100;
-                this.shapeTargetX = 0; // For 'shape_forming'
-                this.shapeTargetY = 0; // For 'shape_forming'
+                this.shapeTargetX = 0;
+                this.shapeTargetY = 0;
                 this.isAtShapeTarget = false;
-                this.formationSpeed = Math.random() * 0.04 + 0.02; // Speed to reach shape point
-                this.shapePointRelX = 0; // Relative X in shape after formation
-                this.shapePointRelY = 0; // Relative Y in shape after formation
-                this.parentShape = null; // Reference to its ShapeObject
+                this.formationSpeed = Math.random() * 0.04 + 0.02;
+                this.shapePointRelX = 0;
+                this.shapePointRelY = 0;
+                this.parentShape = null;
 
                 if (this.type === 'mouse') {
                     const angle = Math.random() * Math.PI * 2;
@@ -150,13 +125,13 @@
                     this.life = PARTICLE_LIFESPAN_MOUSE + Math.random() * 40;
                 } else if (this.type === 'idle_random') {
                     const angle = Math.random() * Math.PI * 2;
-                    const speed = Math.random() * 1.5 + 0.3; // Slower random drift
+                    const speed = Math.random() * 1.5 + 0.3;
                     this.vx = Math.cos(angle) * speed;
                     this.vy = Math.sin(angle) * speed;
                     this.life = PARTICLE_LIFESPAN_IDLE_RANDOM + Math.random() * 40;
                 } else if (this.type === 'shape_forming' || this.type === 'shape_active') {
                     this.vx = 0; this.vy = 0;
-                    this.life = PARTICLE_LIFESPAN_IDLE_RANDOM * SHAPE_LIFESPAN_MULTIPLIER; // Longer life for shape particles
+                    this.life = PARTICLE_LIFESPAN_IDLE_RANDOM * SHAPE_LIFESPAN_MULTIPLIER;
                     this.isSparkle = Math.random() < SPARKLE_CHANCE_SHAPE;
                     if(this.isSparkle) this.color.l = Math.min(100, this.color.l + 25);
                 } else { 
@@ -175,7 +150,7 @@
                 if (this.type === 'mouse' || this.type === 'idle_random') {
                     this.x += this.vx;
                     this.y += this.vy;
-                    this.vx *= 0.97; // Slightly more friction
+                    this.vx *= 0.97;
                     this.vy *= 0.97;
                     this.size = currentBaseSize;
                 } else if (this.type === 'shape_forming') {
@@ -192,17 +167,14 @@
                             if (this.parentShape) this.parentShape.checkIfFormed();
                         }
                     }
-                    // Position will be controlled by ShapeObject once formed and spinning
                 } else if (this.type === 'shape_active') {
-                    // Position is dictated by the parent ShapeObject's rotation and disintegration
                     if (this.parentShape && this.parentShape.state === 'disintegrating') {
                          this.x += this.vx;
                          this.y += this.vy;
-                         this.vx *= 0.98; // Slow down disintegration
-                         this.vy *= 0.98;
+                         this.vx *= 0.99; // Reduced friction for a longer drift
+                         this.vy *= 0.99;
                     }
                 }
-
 
                 if (this.isSparkle && (this.type === 'shape_forming' || this.type === 'shape_active')) {
                     this.opacity = lifeRatio * (0.7 + Math.sin(Date.now() * 0.025 + this.sparkleSeed) * 0.3);
@@ -227,27 +199,26 @@
                 this.anchorX = x;
                 this.anchorY = y;
                 this.template = shapeTemplate;
-                this.particles = []; // Particles belonging to this shape
-                this.state = 'forming'; // 'forming', 'spinning_slow', 'spinning_fast', 'disintegrating', 'done'
-                this.currentAngle = Math.random() * Math.PI * 2; // Initial random orientation
+                this.particles = [];
+                this.state = 'forming';
+                this.currentAngle = Math.random() * Math.PI * 2;
                 this.spinSpeed = 0;
-                this.age = 0; // Frames since fully formed
+                this.age = 0;
                 this.baseHue = initialHue;
             }
 
             addParticle(particle, targetRelX, targetRelY) {
                 particle.parentShape = this;
                 particle.type = 'shape_forming';
-                particle.shapePointRelX = targetRelX; // Store relative coords for spinning
+                particle.shapePointRelX = targetRelX;
                 particle.shapePointRelY = targetRelY;
 
-                // Calculate absolute target for formation
                 const rotatedX = targetRelX * Math.cos(this.currentAngle) - targetRelY * Math.sin(this.currentAngle);
                 const rotatedY = targetRelX * Math.sin(this.currentAngle) + targetRelY * Math.cos(this.currentAngle);
                 particle.shapeTargetX = this.anchorX + rotatedX * SHAPE_SCALE;
                 particle.shapeTargetY = this.anchorY + rotatedY * SHAPE_SCALE;
                 
-                particle.isAtShapeTarget = false; // Reset for formation
+                particle.isAtShapeTarget = false;
                 particle.life = PARTICLE_LIFESPAN_IDLE_RANDOM * SHAPE_LIFESPAN_MULTIPLIER;
                 particle.initialLife = particle.life;
                 this.particles.push(particle);
@@ -255,14 +226,14 @@
             
             checkIfFormed() {
                 if (this.state !== 'forming') return;
-                if (this.particles.length < PARTICLES_PER_SHAPE_TARGET * 0.7) return; // Need most particles
+                if (this.particles.length < PARTICLES_PER_SHAPE_TARGET * 0.7) return;
 
                 for (const p of this.particles) {
                     if (!p.isAtShapeTarget) return;
                 }
                 this.state = 'spinning_slow';
                 this.spinSpeed = SHAPE_SPIN_SPEED_SLOW;
-                this.particles.forEach(p => p.type = 'shape_active'); // Transition particle type
+                this.particles.forEach(p => p.type = 'shape_active');
             }
 
             update() {
@@ -274,7 +245,7 @@
                     if (this.age > SHAPE_SLOW_SPIN_DURATION) {
                         this.state = 'spinning_fast';
                         this.spinSpeed = SHAPE_SPIN_SPEED_FAST;
-                        this.age = 0; // Reset age for this state
+                        this.age = 0;
                     }
                 } else if (this.state === 'spinning_fast') {
                     this.currentAngle += this.spinSpeed;
@@ -283,8 +254,6 @@
                         this.disintegrate();
                     }
                 } else if (this.state === 'disintegrating') {
-                    // Particles fly out, handled by particle.update()
-                    // Check if all particles are faded
                     let allFaded = true;
                     for (const p of this.particles) {
                         if (p.life > 0) {
@@ -295,7 +264,6 @@
                     if (allFaded) this.state = 'done';
                 }
 
-                // Update particle positions if spinning
                 if (this.state === 'spinning_slow' || this.state === 'spinning_fast') {
                     for (const p of this.particles) {
                         const rotatedX = p.shapePointRelX * Math.cos(this.currentAngle) - p.shapePointRelY * Math.sin(this.currentAngle);
@@ -308,7 +276,7 @@
 
             disintegrate() {
                 for (const p of this.particles) {
-                    p.life = Math.min(p.life, PARTICLE_LIFESPAN_IDLE_RANDOM / 2); // Shorten life
+                    // *** CHANGE: Removed the line that shortens particle life for a gradual fade ***
                     const angle = Math.atan2(p.y - this.anchorY, p.x - this.anchorX) + (Math.random() -0.5) * 0.5;
                     const speed = SHAPE_DISINTEGRATE_SPEED + Math.random();
                     p.vx = Math.cos(angle) * speed;
@@ -328,12 +296,11 @@
                 clearTimeout(shapeFormationTimeoutId);
                 if (idleDropletTimer) clearInterval(idleDropletTimer);
                 
-                // If shapes are active, make them disintegrate faster
                 activeShapes.forEach(shape => {
                     if (shape.state !== 'disintegrating' && shape.state !== 'done') {
                         shape.state = 'disintegrating';
-                        shape.disintegrate(); // Trigger immediate disintegration logic
-                        shape.particles.forEach(p => p.life = Math.min(p.life, PARTICLE_LIFESPAN_IDLE_RANDOM / 3));
+                        shape.disintegrate();
+                        shape.particles.forEach(p => p.life = Math.min(p.life, PARTICLE_LIFESPAN_IDLE_RANDOM)); // Faster fade on interrupt
                     }
                 });
             }
@@ -361,7 +328,7 @@
         function startIdleDroplets() {
             if (idleDropletTimer) clearInterval(idleDropletTimer);
             idleDropletTimer = setInterval(() => {
-                if (!isIdleMode || activeShapes.some(s => s.state !== 'done')) return; // Only spawn if truly idle
+                if (!isIdleMode || activeShapes.some(s => s.state !== 'done')) return;
 
                 const x = Math.random() * width;
                 const y = Math.random() * height;
@@ -373,10 +340,10 @@
         function startShapesFormation() {
             if (!isIdleMode || activeShapes.some(s => s.state !== 'done' && s.state !== 'disintegrating')) return;
             
-            activeShapes = []; // Clear old shapes
+            activeShapes = [];
 
             let availableIdleParticles = particles.filter(p => p.type === 'idle_random');
-            availableIdleParticles.sort(() => 0.5 - Math.random()); // Shuffle for random assignment
+            availableIdleParticles.sort(() => 0.5 - Math.random());
 
             let particlePoolIndex = 0;
 
@@ -395,11 +362,10 @@
                     if (particlePoolIndex < availableIdleParticles.length) {
                         p = availableIdleParticles[particlePoolIndex++];
                     } else {
-                        // Spawn new particle near where shape will form if pool is empty
                         const spawnX = shapeX + (Math.random() - 0.5) * 50;
                         const spawnY = shapeY + (Math.random() - 0.5) * 50;
                         p = new Particle(spawnX, spawnY, {h: (shapeHue + j*5) % 360, s:100, l:70}, PARTICLE_BASE_SIZE, 'shape_forming');
-                        particles.push(p); // Add to global list
+                        particles.push(p);
                     }
                     
                     p.color.h = (shapeHue + j * (360 / PARTICLES_PER_SHAPE_TARGET / 2)) % 360;
@@ -419,16 +385,15 @@
                     activeShapes.splice(i, 1);
                 }
             }
-             // If all shapes are done and still in idle mode, schedule new formation
             if (isIdleMode && activeShapes.length === 0 && (Date.now() - lastMouseMoveTime > MOUSE_INACTIVITY_TIMEOUT)) {
                  clearTimeout(shapeFormationTimeoutId);
-                 shapeFormationTimeoutId = setTimeout(startShapesFormation, SHAPE_FORMATION_DELAY / 2); // Faster respawn
+                 shapeFormationTimeoutId = setTimeout(startShapesFormation, SHAPE_FORMATION_DELAY / 2);
             }
         }
 
         // --- Animation Loop ---
         function animate() {
-            ctx.fillStyle = 'rgba(0, 0, 0, 1)'; // Solid clear
+            ctx.fillStyle = 'rgba(0, 0, 0, 1)';
             ctx.fillRect(0, 0, width, height);
 
             for (let i = particles.length - 1; i >= 0; i--) {
@@ -441,11 +406,11 @@
             }
             
             checkIdleStatus();
-            if (isIdleMode || activeShapes.length > 0) { // Update shapes if idle or if any shapes are still active (e.g. disintegrating)
+            if (isIdleMode || activeShapes.length > 0) {
                 updateActiveShapes();
             }
             
-            hue = (hue + 0.2) % 360; // Slower global hue shift
+            hue = (hue + 0.2) % 360;
             requestAnimationFrame(animate);
         }
 
@@ -459,7 +424,7 @@
         lastMouseMoveTime = Date.now();
 
         animate();
-        showMessage("Move mouse/touch for droplets! Stay still for spinning shapes!", 5000);
+        // *** CHANGE: Removed the initial showMessage() call ***
     </script>
 </body>
 </html>

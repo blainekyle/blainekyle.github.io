@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>blainekyle.github.io</title>
+    <title>Interactive Rainbow Shapes Wallpaper</title>
     <style>
         body {
             margin: 0;
@@ -17,6 +17,7 @@
             height: 100vh;
         }
         .message-box {
+			opacity: 0;
             position: fixed;
             top: 20px;
             left: 50%;
@@ -30,6 +31,40 @@
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             border: 1px solid rgba(255,255,255,0.2);
         }
+		.gitnav {
+			display: inline-block;
+			position: fixed;
+			bottom: 2vh;
+			width: 100vw;
+			min-height: 6vh;
+			padding: 2vh;
+			text-align: center;
+			border: 0 solid #000c;
+			border-radius: 3rem;
+		}
+		.ico {
+			display: inline;
+			max-height: 16vh;
+			min-height: 48px;
+			margin: auto 3rem;
+			transition: 0.2s;
+		}
+		.ico:hover {
+			transform: rotate(10deg)scale(1.1);
+			box-shadow: 0 0 4rem #fff;
+			border-radius: 9999px;
+		}
+		.port {
+			display: block;
+			position: fixed;
+			top: 5vh;
+			left: 5vw;
+			width: 90vw;
+			height: 80vh;
+			border-radius: 3rem;
+			overflow: hidden;
+		}
+		
     </style>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
@@ -48,18 +83,18 @@
         const PARTICLE_COUNT_MOUSE = 5;
         const PARTICLE_LIFESPAN_MOUSE = 216; 
         const PARTICLE_SPEED_MOUSE_MULTIPLIER = 0.2; 
-        const PARTICLE_LIFESPAN_IDLE_RANDOM = 200;
-        const PARTICLE_BASE_SIZE = 4;
+        const PARTICLE_LIFESPAN_IDLE_RANDOM = 200; // Shorter life for random ones, shapes will get new life
+        const PARTICLE_BASE_SIZE = 4; // Slightly smaller base size
         const MOUSE_INACTIVITY_TIMEOUT = 4000; // ms
-        const IDLE_DROPLET_SPAWN_INTERVAL = 70; // ms
+        const IDLE_DROPLET_SPAWN_INTERVAL = 70; // ms (more frequent for more particles)
         
         const SHAPE_FORMATION_DELAY = 4000; // ms after idle starts
-        const NUM_SHAPES_TO_FORM = 10;
-        const PARTICLES_PER_SHAPE_TARGET = 40;
-        const SHAPE_LIFESPAN_MULTIPLIER = 5.0; // Increased lifespan for a slower fade after disintegration
-        const SPARKLE_CHANCE_SHAPE = 0.3;
+        const NUM_SHAPES_TO_FORM = 10; // Number of shapes to attempt to form
+        const PARTICLES_PER_SHAPE_TARGET = 40; // Target particles per shape
+        const SHAPE_LIFESPAN_MULTIPLIER = 4.0; // Lifespan for shape particles
+        const SPARKLE_CHANCE_SHAPE = 0.3; // Sparkle chance for shape particles
 
-        const SHAPE_SCALE = 1.5;
+        const SHAPE_SCALE = 1.5; // Scale for drawing shapes
         const SHAPE_SLOW_SPIN_DURATION = 300; // frames (5s at 60fps)
         const SHAPE_FAST_SPIN_DURATION = 180; // frames (3s at 60fps)
         const SHAPE_SPIN_SPEED_SLOW = 0.005; // radians per frame
@@ -67,8 +102,8 @@
         const SHAPE_DISINTEGRATE_SPEED = 1.5;
 
         // --- Global State ---
-        let particles = [];
-        let activeShapes = [];
+        let particles = []; // All active particles
+        let activeShapes = []; // Stores active shape objects
         let hue = 0;
         let mouseX = width / 2;
         let mouseY = height / 2;
@@ -79,15 +114,40 @@
 
         // --- Basic Shape Definitions (centered at 0,0) ---
         const basicShapeTemplates = [
-            { name: 'triangle', points: [{x: 0, y: -15}, {x: 13, y: 7.5}, {x: -13, y: 7.5}] },
-            { name: 'square', points: [{x: -10, y: -10}, {x: 10, y: -10}, {x: 10, y: 10}, {x: -10, y: 10}] },
-            { name: 'circle', points: [{x:0,y:-12},{x:8.5,y:-8.5},{x:12,y:0},{x:8.5,y:8.5},{x:0,y:12},{x:-8.5,y:8.5},{x:-12,y:0},{x:-8.5,y:-8.5}] },
-            { name: 'cross', points: [{x: -3, y: -10}, {x: 3, y: -10}, {x: 3, y: -3}, {x: 10, y: -3}, {x: 10, y: 3}, {x: 3, y: 3}, {x: 3, y: 10}, {x: -3, y: 10}, {x: -3, y: 3}, {x: -10, y: 3}, {x: -10, y: -3}, {x: -3, y: -3}] },
-            { name: 'star', points: [{x: 0, y: -15}, {x: 4.4, y: -4.6}, {x: 14.3, y: -4.6}, {x: 7, y: 2.3}, {x: 8.8, y: 12.1}, {x: 0, y: 7.5}, {x: -8.8, y: 12.1}, {x: -7, y: 2.3}, {x: -14.3, y: -4.6}, {x: -4.4, y: -4.6}] }
+            { // Triangle
+                name: 'triangle',
+                points: [{x: 0, y: -15}, {x: 13, y: 7.5}, {x: -13, y: 7.5}]
+            },
+            { // Square
+                name: 'square',
+                points: [{x: -10, y: -10}, {x: 10, y: -10}, {x: 10, y: 10}, {x: -10, y: 10}]
+            },
+            { // Circle (8-point approximation)
+                name: 'circle',
+                points: [
+                    {x:0,y:-12},{x:8.5,y:-8.5},{x:12,y:0},{x:8.5,y:8.5},
+                    {x:0,y:12},{x:-8.5,y:8.5},{x:-12,y:0},{x:-8.5,y:-8.5}
+                ]
+            },
+            { // Cross
+                name: 'cross',
+                points: [
+                    {x: -3, y: -10}, {x: 3, y: -10}, {x: 3, y: -3}, {x: 10, y: -3}, 
+                    {x: 10, y: 3}, {x: 3, y: 3}, {x: 3, y: 10}, {x: -3, y: 10}, 
+                    {x: -3, y: 3}, {x: -10, y: 3}, {x: -10, y: -3}, {x: -3, y: -3}
+                ]
+            },
+            { // Simple Star (5 points)
+                name: 'star',
+                points: [
+                    {x: 0, y: -15}, {x: 4.4, y: -4.6}, {x: 14.3, y: -4.6}, {x: 7, y: 2.3},
+                    {x: 8.8, y: 12.1}, {x: 0, y: 7.5}, {x: -8.8, y: 12.1}, {x: -7, y: 2.3},
+                    {x: -14.3, y: -4.6}, {x: -4.4, y: -4.6}
+                ]
+            }
         ];
 
         // --- Utility: Show custom message ---
-        // Kept for potential debugging, but not called on load.
         function showMessage(message, duration = 3000) {
             const alertBox = document.getElementById('customAlertBox');
             if (alertBox) {
@@ -105,17 +165,17 @@
                 this.size = Math.random() * size + PARTICLE_BASE_SIZE / 2;
                 this.initialSize = this.size;
                 this.color = {...color}; 
-                this.type = type;
+                this.type = type; // 'mouse', 'idle_random', 'shape_forming', 'shape_active'
                 this.opacity = 1;
                 this.isSparkle = false;
                 this.sparkleSeed = Math.random() * 100;
-                this.shapeTargetX = 0;
-                this.shapeTargetY = 0;
+                this.shapeTargetX = 0; // For 'shape_forming'
+                this.shapeTargetY = 0; // For 'shape_forming'
                 this.isAtShapeTarget = false;
-                this.formationSpeed = Math.random() * 0.04 + 0.02;
-                this.shapePointRelX = 0;
-                this.shapePointRelY = 0;
-                this.parentShape = null;
+                this.formationSpeed = Math.random() * 0.04 + 0.02; // Speed to reach shape point
+                this.shapePointRelX = 0; // Relative X in shape after formation
+                this.shapePointRelY = 0; // Relative Y in shape after formation
+                this.parentShape = null; // Reference to its ShapeObject
 
                 if (this.type === 'mouse') {
                     const angle = Math.random() * Math.PI * 2;
@@ -125,13 +185,13 @@
                     this.life = PARTICLE_LIFESPAN_MOUSE + Math.random() * 40;
                 } else if (this.type === 'idle_random') {
                     const angle = Math.random() * Math.PI * 2;
-                    const speed = Math.random() * 1.5 + 0.3;
+                    const speed = Math.random() * 1.5 + 0.3; // Slower random drift
                     this.vx = Math.cos(angle) * speed;
                     this.vy = Math.sin(angle) * speed;
                     this.life = PARTICLE_LIFESPAN_IDLE_RANDOM + Math.random() * 40;
                 } else if (this.type === 'shape_forming' || this.type === 'shape_active') {
                     this.vx = 0; this.vy = 0;
-                    this.life = PARTICLE_LIFESPAN_IDLE_RANDOM * SHAPE_LIFESPAN_MULTIPLIER;
+                    this.life = PARTICLE_LIFESPAN_IDLE_RANDOM * SHAPE_LIFESPAN_MULTIPLIER; // Longer life for shape particles
                     this.isSparkle = Math.random() < SPARKLE_CHANCE_SHAPE;
                     if(this.isSparkle) this.color.l = Math.min(100, this.color.l + 25);
                 } else { 
@@ -150,7 +210,7 @@
                 if (this.type === 'mouse' || this.type === 'idle_random') {
                     this.x += this.vx;
                     this.y += this.vy;
-                    this.vx *= 0.97;
+                    this.vx *= 0.97; // Slightly more friction
                     this.vy *= 0.97;
                     this.size = currentBaseSize;
                 } else if (this.type === 'shape_forming') {
@@ -167,14 +227,17 @@
                             if (this.parentShape) this.parentShape.checkIfFormed();
                         }
                     }
+                    // Position will be controlled by ShapeObject once formed and spinning
                 } else if (this.type === 'shape_active') {
+                    // Position is dictated by the parent ShapeObject's rotation and disintegration
                     if (this.parentShape && this.parentShape.state === 'disintegrating') {
                          this.x += this.vx;
                          this.y += this.vy;
-                         this.vx *= 0.99; // Reduced friction for a longer drift
-                         this.vy *= 0.99;
+                         this.vx *= 0.98; // Slow down disintegration
+                         this.vy *= 0.98;
                     }
                 }
+
 
                 if (this.isSparkle && (this.type === 'shape_forming' || this.type === 'shape_active')) {
                     this.opacity = lifeRatio * (0.7 + Math.sin(Date.now() * 0.025 + this.sparkleSeed) * 0.3);
@@ -199,26 +262,27 @@
                 this.anchorX = x;
                 this.anchorY = y;
                 this.template = shapeTemplate;
-                this.particles = [];
-                this.state = 'forming';
-                this.currentAngle = Math.random() * Math.PI * 2;
+                this.particles = []; // Particles belonging to this shape
+                this.state = 'forming'; // 'forming', 'spinning_slow', 'spinning_fast', 'disintegrating', 'done'
+                this.currentAngle = Math.random() * Math.PI * 2; // Initial random orientation
                 this.spinSpeed = 0;
-                this.age = 0;
+                this.age = 0; // Frames since fully formed
                 this.baseHue = initialHue;
             }
 
             addParticle(particle, targetRelX, targetRelY) {
                 particle.parentShape = this;
                 particle.type = 'shape_forming';
-                particle.shapePointRelX = targetRelX;
+                particle.shapePointRelX = targetRelX; // Store relative coords for spinning
                 particle.shapePointRelY = targetRelY;
 
+                // Calculate absolute target for formation
                 const rotatedX = targetRelX * Math.cos(this.currentAngle) - targetRelY * Math.sin(this.currentAngle);
                 const rotatedY = targetRelX * Math.sin(this.currentAngle) + targetRelY * Math.cos(this.currentAngle);
                 particle.shapeTargetX = this.anchorX + rotatedX * SHAPE_SCALE;
                 particle.shapeTargetY = this.anchorY + rotatedY * SHAPE_SCALE;
                 
-                particle.isAtShapeTarget = false;
+                particle.isAtShapeTarget = false; // Reset for formation
                 particle.life = PARTICLE_LIFESPAN_IDLE_RANDOM * SHAPE_LIFESPAN_MULTIPLIER;
                 particle.initialLife = particle.life;
                 this.particles.push(particle);
@@ -226,14 +290,14 @@
             
             checkIfFormed() {
                 if (this.state !== 'forming') return;
-                if (this.particles.length < PARTICLES_PER_SHAPE_TARGET * 0.7) return;
+                if (this.particles.length < PARTICLES_PER_SHAPE_TARGET * 0.7) return; // Need most particles
 
                 for (const p of this.particles) {
                     if (!p.isAtShapeTarget) return;
                 }
                 this.state = 'spinning_slow';
                 this.spinSpeed = SHAPE_SPIN_SPEED_SLOW;
-                this.particles.forEach(p => p.type = 'shape_active');
+                this.particles.forEach(p => p.type = 'shape_active'); // Transition particle type
             }
 
             update() {
@@ -245,7 +309,7 @@
                     if (this.age > SHAPE_SLOW_SPIN_DURATION) {
                         this.state = 'spinning_fast';
                         this.spinSpeed = SHAPE_SPIN_SPEED_FAST;
-                        this.age = 0;
+                        this.age = 0; // Reset age for this state
                     }
                 } else if (this.state === 'spinning_fast') {
                     this.currentAngle += this.spinSpeed;
@@ -254,6 +318,8 @@
                         this.disintegrate();
                     }
                 } else if (this.state === 'disintegrating') {
+                    // Particles fly out, handled by particle.update()
+                    // Check if all particles are faded
                     let allFaded = true;
                     for (const p of this.particles) {
                         if (p.life > 0) {
@@ -264,6 +330,7 @@
                     if (allFaded) this.state = 'done';
                 }
 
+                // Update particle positions if spinning
                 if (this.state === 'spinning_slow' || this.state === 'spinning_fast') {
                     for (const p of this.particles) {
                         const rotatedX = p.shapePointRelX * Math.cos(this.currentAngle) - p.shapePointRelY * Math.sin(this.currentAngle);
@@ -276,7 +343,7 @@
 
             disintegrate() {
                 for (const p of this.particles) {
-                    // *** CHANGE: Removed the line that shortens particle life for a gradual fade ***
+                    p.life = Math.min(p.life, PARTICLE_LIFESPAN_IDLE_RANDOM / 2); // Shorten life
                     const angle = Math.atan2(p.y - this.anchorY, p.x - this.anchorX) + (Math.random() -0.5) * 0.5;
                     const speed = SHAPE_DISINTEGRATE_SPEED + Math.random();
                     p.vx = Math.cos(angle) * speed;
@@ -296,11 +363,12 @@
                 clearTimeout(shapeFormationTimeoutId);
                 if (idleDropletTimer) clearInterval(idleDropletTimer);
                 
+                // If shapes are active, make them disintegrate faster
                 activeShapes.forEach(shape => {
                     if (shape.state !== 'disintegrating' && shape.state !== 'done') {
                         shape.state = 'disintegrating';
-                        shape.disintegrate();
-                        shape.particles.forEach(p => p.life = Math.min(p.life, PARTICLE_LIFESPAN_IDLE_RANDOM)); // Faster fade on interrupt
+                        shape.disintegrate(); // Trigger immediate disintegration logic
+                        shape.particles.forEach(p => p.life = Math.min(p.life, PARTICLE_LIFESPAN_IDLE_RANDOM / 3));
                     }
                 });
             }
@@ -328,7 +396,7 @@
         function startIdleDroplets() {
             if (idleDropletTimer) clearInterval(idleDropletTimer);
             idleDropletTimer = setInterval(() => {
-                if (!isIdleMode || activeShapes.some(s => s.state !== 'done')) return;
+                if (!isIdleMode || activeShapes.some(s => s.state !== 'done')) return; // Only spawn if truly idle
 
                 const x = Math.random() * width;
                 const y = Math.random() * height;
@@ -340,10 +408,10 @@
         function startShapesFormation() {
             if (!isIdleMode || activeShapes.some(s => s.state !== 'done' && s.state !== 'disintegrating')) return;
             
-            activeShapes = [];
+            activeShapes = []; // Clear old shapes
 
             let availableIdleParticles = particles.filter(p => p.type === 'idle_random');
-            availableIdleParticles.sort(() => 0.5 - Math.random());
+            availableIdleParticles.sort(() => 0.5 - Math.random()); // Shuffle for random assignment
 
             let particlePoolIndex = 0;
 
@@ -362,10 +430,11 @@
                     if (particlePoolIndex < availableIdleParticles.length) {
                         p = availableIdleParticles[particlePoolIndex++];
                     } else {
+                        // Spawn new particle near where shape will form if pool is empty
                         const spawnX = shapeX + (Math.random() - 0.5) * 50;
                         const spawnY = shapeY + (Math.random() - 0.5) * 50;
                         p = new Particle(spawnX, spawnY, {h: (shapeHue + j*5) % 360, s:100, l:70}, PARTICLE_BASE_SIZE, 'shape_forming');
-                        particles.push(p);
+                        particles.push(p); // Add to global list
                     }
                     
                     p.color.h = (shapeHue + j * (360 / PARTICLES_PER_SHAPE_TARGET / 2)) % 360;
@@ -385,15 +454,16 @@
                     activeShapes.splice(i, 1);
                 }
             }
+             // If all shapes are done and still in idle mode, schedule new formation
             if (isIdleMode && activeShapes.length === 0 && (Date.now() - lastMouseMoveTime > MOUSE_INACTIVITY_TIMEOUT)) {
                  clearTimeout(shapeFormationTimeoutId);
-                 shapeFormationTimeoutId = setTimeout(startShapesFormation, SHAPE_FORMATION_DELAY / 2);
+                 shapeFormationTimeoutId = setTimeout(startShapesFormation, SHAPE_FORMATION_DELAY / 2); // Faster respawn
             }
         }
 
         // --- Animation Loop ---
         function animate() {
-            ctx.fillStyle = 'rgba(0, 0, 0, 1)';
+            ctx.fillStyle = 'rgba(0, 0, 0, 1)'; // Solid clear
             ctx.fillRect(0, 0, width, height);
 
             for (let i = particles.length - 1; i >= 0; i--) {
@@ -406,11 +476,11 @@
             }
             
             checkIdleStatus();
-            if (isIdleMode || activeShapes.length > 0) {
+            if (isIdleMode || activeShapes.length > 0) { // Update shapes if idle or if any shapes are still active (e.g. disintegrating)
                 updateActiveShapes();
             }
             
-            hue = (hue + 0.2) % 360;
+            hue = (hue + 0.2) % 360; // Slower global hue shift
             requestAnimationFrame(animate);
         }
 
@@ -424,7 +494,18 @@
         lastMouseMoveTime = Date.now();
 
         animate();
-        // *** CHANGE: Removed the initial showMessage() call ***
+        showMessage("Move mouse/touch for droplets! Stay still for spinning shapes!", 5000);
     </script>
+	
+	<div class="gitnav">
+	<a href="https://blainekyle.github.io/AssID-Stripper/" target="port">
+	<svg class="ico" fill="#ffffff" height="64px" width="64px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="-102.4 -102.4 716.80 716.80" xml:space="preserve" stroke="#ffffff" stroke-width="0.00512"><g id="SVGRepo_bgCarrier" stroke-width="0"><path transform="translate(-102.4, -102.4), scale(22.4)" d="M16,29.637502318869032C18.509649484635734,29.763688952891044,20.24114230152749,27.237729811995194,22.43743627599479,26.01684636954181C24.82341145251988,24.690522288617807,28.088114087433816,24.506003557011923,29.46823176958915,22.150735356989887C30.858569400684313,19.77802609302449,29.935138419803064,16.77270200148925,29.43926898392912,14.067724832951114C28.960114037869793,11.45392552306162,28.530572470082912,8.649098315605332,26.649129136411077,6.772477076011757C24.809961461298226,4.938023143479599,22.04044895316817,4.593708330409502,19.483231158508428,4.137204093366426C17.161287218454696,3.722699998711454,14.835542091849176,3.6668897859910894,12.551604567877046,4.255843682174861C10.208497341941241,4.860055537975204,7.963846759298054,5.8436141855768575,6.248266687403124,7.550074983790301C4.451548560734542,9.337242542348424,3.3209716942462597,11.634113310809099,2.671305812575614,14.083623088551404C1.9600905805960016,16.765199440280632,0.8503340138150468,19.90053330636846,2.354348816771072,22.23176008831019C3.874238188177194,24.587592491852117,7.501500109906907,24.052457475904916,9.96557166574835,25.38975377163917C12.172236712963274,26.5873508895358,13.492468686551447,29.511422187724826,16,29.637502318869032" fill="#ffffff" strokewidth="0"></path></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" stroke="#030303" stroke-width="21.503999999999998"> <g> <g> <path d="M497.088,14.909C487.471,5.296,474.688,0,461.092,0c-13.599,0-26.385,5.298-36.002,14.915L224.449,215.553l25.242,25.242 l-22.799,22.799c-9.338-5.547-20.025-8.512-31.168-8.512c-16.344,0-31.71,6.364-43.267,17.923L17.921,407.539 c-23.858,23.859-23.859,62.679-0.003,86.535C29.476,505.632,44.841,511.999,61.186,512c0.001,0,0.001,0,0.002,0 c16.342,0,31.709-6.366,43.268-17.926l134.532-134.533c20.146-20.143,23.279-50.959,9.401-74.427l22.81-22.81l25.246,25.246 l200.643-200.64C516.934,67.065,516.936,34.766,497.088,14.909z M217.481,338.032L82.949,472.566 c-5.815,5.814-13.543,9.017-21.761,9.017c-8.219-0.001-15.947-3.202-21.759-9.017c-11.997-11.997-11.997-31.519,0.002-43.519 l134.533-134.533c5.813-5.812,13.541-9.014,21.759-9.014c2.798,0,5.537,0.379,8.165,1.098L62.973,427.516l21.509,21.508 L225.38,308.123C228.196,318.439,225.569,329.945,217.481,338.032z M475.58,65.403L296.445,244.535l-28.979-28.982L446.599,36.421 c3.871-3.871,9.019-6.004,14.493-6.004c5.472,0,10.619,2.132,14.487,5.999C483.568,44.41,483.569,57.413,475.58,65.403z"></path> </g> </g> </g><g id="SVGRepo_iconCarrier"> <g> <g> <path d="M497.088,14.909C487.471,5.296,474.688,0,461.092,0c-13.599,0-26.385,5.298-36.002,14.915L224.449,215.553l25.242,25.242 l-22.799,22.799c-9.338-5.547-20.025-8.512-31.168-8.512c-16.344,0-31.71,6.364-43.267,17.923L17.921,407.539 c-23.858,23.859-23.859,62.679-0.003,86.535C29.476,505.632,44.841,511.999,61.186,512c0.001,0,0.001,0,0.002,0 c16.342,0,31.709-6.366,43.268-17.926l134.532-134.533c20.146-20.143,23.279-50.959,9.401-74.427l22.81-22.81l25.246,25.246 l200.643-200.64C516.934,67.065,516.936,34.766,497.088,14.909z M217.481,338.032L82.949,472.566 c-5.815,5.814-13.543,9.017-21.761,9.017c-8.219-0.001-15.947-3.202-21.759-9.017c-11.997-11.997-11.997-31.519,0.002-43.519 l134.533-134.533c5.813-5.812,13.541-9.014,21.759-9.014c2.798,0,5.537,0.379,8.165,1.098L62.973,427.516l21.509,21.508 L225.38,308.123C228.196,318.439,225.569,329.945,217.481,338.032z M475.58,65.403L296.445,244.535l-28.979-28.982L446.599,36.421 c3.871-3.871,9.019-6.004,14.493-6.004c5.472,0,10.619,2.132,14.487,5.999C483.568,44.41,483.569,57.413,475.58,65.403z"></path> </g> </g> </g></svg>
+	</a>
+	<a href="https://blainekyle.github.io/PivotPad/" target="port">
+	<svg class="ico"  width="64px" height="64px" viewBox="-4.8 -4.8 57.60 57.60" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></rect></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" stroke="#CCCCCC" stroke-width="0"> <rect width="48" height="48" fill="white" fill-opacity="0.01"></rect> <path d="M42.0004 4H6.00005C4.89546 4 4.00002 4.89546 4.00005 6.00005L4.00104 42.0001C4.00107 43.1046 4.8965 44 6.00104 44H42.0004C43.105 44 44.0004 43.1046 44.0004 42V6C44.0004 4.89543 43.105 4 42.0004 4Z" fill="#000000" stroke="#000000" stroke-width="1.7759999999999998"></path> <path d="M20.0088 34.0083H33.5005V20.0083" stroke="white" stroke-width="1.7759999999999998" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M24.5 38.5L23 37L20 34L23 31L24.5 29.5" stroke="white" stroke-width="1.7759999999999998" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M29 24.5L30.5 23L33.5 20L36.5 23L38 24.5" stroke="white" stroke-width="1.7759999999999998" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M14 4L14 44" stroke="white" stroke-width="1.7759999999999998" stroke-linecap="round"></path> <path d="M4 14.0378L44 14" stroke="white" stroke-width="1.7759999999999998" stroke-linecap="round"></path> <path d="M8 4H28" stroke="#000000" stroke-width="1.7759999999999998" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M8 44H28" stroke="#000000" stroke-width="1.7759999999999998" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M44 8V18" stroke="#000000" stroke-width="1.7759999999999998" stroke-linecap="round"></path> <path d="M4 8L4 18" stroke="#000000" stroke-width="1.7759999999999998" stroke-linecap="round"></path> </g><g id="SVGRepo_iconCarrier"> <rect width="48" height="48" fill="white" fill-opacity="0.01"></rect> <path d="M42.0004 4H6.00005C4.89546 4 4.00002 4.89546 4.00005 6.00005L4.00104 42.0001C4.00107 43.1046 4.8965 44 6.00104 44H42.0004C43.105 44 44.0004 43.1046 44.0004 42V6C44.0004 4.89543 43.105 4 42.0004 4Z" fill="#000000" stroke="#000000" stroke-width="1.7759999999999998"></path> <path d="M20.0088 34.0083H33.5005V20.0083" stroke="white" stroke-width="1.7759999999999998" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M24.5 38.5L23 37L20 34L23 31L24.5 29.5" stroke="white" stroke-width="1.7759999999999998" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M29 24.5L30.5 23L33.5 20L36.5 23L38 24.5" stroke="white" stroke-width="1.7759999999999998" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M14 4L14 44" stroke="white" stroke-width="1.7759999999999998" stroke-linecap="round"></path> <path d="M4 14.0378L44 14" stroke="white" stroke-width="1.7759999999999998" stroke-linecap="round"></path> <path d="M8 4H28" stroke="#000000" stroke-width="1.7759999999999998" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M8 44H28" stroke="#000000" stroke-width="1.7759999999999998" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M44 8V18" stroke="#000000" stroke-width="1.7759999999999998" stroke-linecap="round"></path> <path d="M4 8L4 18" stroke="#000000" stroke-width="1.7759999999999998" stroke-linecap="round"></path> </g></svg>
+	</a>
+	</div>
+	<iframe id="port" name="port" class="port" src="" width="90vw" height="80vh"></iframe>
+	
 </body>
 </html>

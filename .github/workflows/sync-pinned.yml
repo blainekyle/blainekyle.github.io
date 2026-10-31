@@ -1,0 +1,116 @@
+name: Sync Pinned GitHub Repositories
+
+on:
+  schedule:
+    - cron: '17 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync-pinned:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Fetch live pinned repositories from github.com/blainekyle
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          node << 'EOF'
+          const fs = require('fs');
+
+          const USER = 'blainekyle';
+
+          async function main() {
+            const profileRes = await fetch(`https://github.com/${USER}`, {
+              headers: { 'User-Agent': 'blainekyle-homepage-sync' }
+            });
+            if (!profileRes.ok) throw new Error(`Profile HTTP ${profileRes.status}`);
+            const html = await profileRes.text();
+
+            // Extract pinned repo cards in exact profile order
+            const itemBlocks = html.split(/pinned-item-list-item\b/i).slice(1);
+            const names = [];
+            for (const block of itemBlocks) {
+              const m = block.match(/class="[^"]*\brepo\b[^"]*"[^>]*>([\s\S]*?)<\/span>/i);
+              if (m) {
+                const name = m[1].replace(/<[^>]+>/g, '').trim();
+                if (name && !names.includes(name)) names.push(name);
+              }
+            }
+
+            if (names.length === 0) {
+              console.log('No pinned items parsed; skipping snapshot overwrite.');
+              return;
+            }
+
+            const apiHeaders = {
+              'Accept': 'application/vnd.github+json',
+              'User-Agent': 'blainekyle-homepage-sync'
+            };
+            if (process.env.GH_TOKEN) {
+              apiHeaders['Authorization'] = `Bearer ${process.env.GH_TOKEN}`;
+            }
+
+            const reposRes = await fetch(`https://api.github.com/users/${USER}/repos?per_page=100`, {
+              headers: apiHeaders
+            });
+            const allRepos = reposRes.ok ? await reposRes.json() : [];
+            const repoMap = new Map(allRepos.map((r) => [r.name.toLowerCase(), r]));
+
+            const pinned = names.map((name) => {
+              const meta = repoMap.get(name.toLowerCase()) || {};
+              const hasPages = Boolean(meta.has_pages);
+              const homepage = meta.homepage || (hasPages ? `https://${USER}.github.io/${meta.name || name}/` : '');
+              return {
+                author: USER,
+                name: meta.name || name,
+                description: meta.description || '',
+                language: meta.language || '',
+                languageColor: '',
+                hasPages,
+                homepage,
+                repoUrl: meta.html_url || `https://github.com/${USER}/${name}`
+              };
+            });
+
+            const outPath = 'assets/pinned.json';
+            let prev = null;
+            if (fs.existsSync(outPath)) {
+              try { prev = JSON.parse(fs.readFileSync(outPath, 'utf8')); } catch {}
+            }
+
+            if (prev && JSON.stringify(prev.pinned) === JSON.stringify(pinned)) {
+              console.log('Pinned snapshot unchanged.');
+              return;
+            }
+
+            const payload = {
+              username: USER,
+              updatedAt: new Date().toISOString(),
+              pinned
+            };
+            fs.writeFileSync(outPath, JSON.stringify(payload, null, 2) + '\n', 'utf8');
+            console.log(`Updated ${outPath} with ${pinned.length} pinned repos:`, names.join(', '));
+          }
+
+          main().catch((err) => {
+            console.error(err);
+            process.exit(1);
+          });
+          EOF
+
+      - name: Commit & push if pinned.json changed
+        run: |
+          if git diff --quiet assets/pinned.json; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/pinned.json
+          git commit -m "chore: sync pinned repositories snapshot"
+          git push

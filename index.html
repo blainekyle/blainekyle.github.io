@@ -193,6 +193,23 @@
             overflow: visible;
         }
 
+        #dockItems {
+            display: contents;
+        }
+
+        .dock-ico-auto {
+            width: 84%;
+            height: 84%;
+            object-fit: contain;
+            opacity: 0.9;
+            transition: opacity 0.22s ease, filter 0.22s ease;
+        }
+
+        .dock-link:hover .dock-ico-auto,
+        .dock-link:focus-visible .dock-ico-auto {
+            opacity: 1;
+        }
+
         .dock-link-laforge {
             width: clamp(42px, 6.2vw, 62px);
         }
@@ -265,131 +282,8 @@
             <span class="cap-tag" id="capTag"></span>
         </div>
 
-        <div class="dock">
-            <!-- 1. starlight (Starlight Cinema Classics) -->
-            <a class="dock-link"
-               href="https://blainekyle.github.io/starlight/"
-               target="_blank"
-               rel="noopener noreferrer"
-               aria-label="Starlight — Communal Archive.org Cinema"
-               style="--accent: #e5be7a;"
-               data-sigil="▲"
-               data-title="Starlight"
-               data-desc="communal archive cinema"
-               data-tag="LIVE">
-                <svg class="dock-ico" viewBox="0 0 656.24 591.24" fill="currentColor" aria-hidden="true">
-                    <polygon points="0 330.38 189.07 391.81 189.07 590.61 305.93 429.78 495 491.21 272.48 330.38 495 169.54 305.93 230.97 189.07 70.14 189.07 268.94 0 330.38"/>
-                    <polygon points="548.24 291.58 514.49 299.34 545.78 352.62 536.99 423.48 564.6 388.71 596.4 462.27 584.45 352.62 615.74 284.85 581.99 283.82 570.74 190.72 548.24 291.58"/>
-                    <path d="M297.55,330.37c119.56,86.95,239.12,173.91,358.69,260.86v-53.86s0-95.17,0-95.17v-98s0-121.34,0-121.34v-59.67s0-30.81,0-30.81v-62.86c-119.56,86.95-239.13,173.91-358.69,260.86ZM638.24,555.37l-135-100.86v-248.28s135-100.86,135-100.86v450Z"/>
-                </svg>
-            </a>
-
-            <!-- 2. minK (Offline Code Editor with Live Web Preview) -->
-            <a class="dock-link"
-               href="https://github.com/blainekyle/minK"
-               target="_blank"
-               rel="noopener noreferrer"
-               aria-label="minK — Offline Code Editor with Live Web Preview"
-               style="--accent: #38bdf8;"
-               data-sigil="◈"
-               data-title="minK"
-               data-desc="offline code &amp; live preview"
-               data-tag="APP">
-                <svg class="dock-ico" viewBox="0 0 145.24 198.03" fill="currentColor" aria-hidden="true">
-                    <path d="M63.06,44.73l2.89,1.89c-4.23-.17-7.87,4.4-6.93,8.52.94,4.13,5.97,6.69,9.93,5.19,3.96-1.5,6.06-6.54,4.51-10.48-1.54-3.94-6.32-6.21-10.4-5.13Z"/>
-                    <path d="M139.41,63.26c-7-14.07-14.16-28.39-25.07-39.69C96.13,4.7,67.91-3.81,42.26,1.61c-11.1,2.34-21.86,7.25-29.9,15.26C4.32,24.88-.74,36.18.09,47.5c1.3,17.73,16.04,31.5,31.37,40.51,14.63,8.59,30.76,14.63,47.44,17.75,9.82,1.84,20.52,2.55,29.31-2.2,5.49-2.97,9.7-7.8,13.79-12.53,7.75-8.96,15.49-17.93,23.24-26.89l-5.83-.88ZM87.15,90.41c-8.35,3.73-18.14,3.32-26.8.4-13.94-4.7-25.64-16.1-29.91-30.17-4.27-14.08-.65-30.46,9.74-40.87s27.31-13.98,40.72-7.95l-8.04-1.29c19.39,5.83,33.9,25.11,34.13,45.35.16,14.06-7.01,28.8-19.84,34.54Z"/>
-                    <path d="M90.32,171.87c.04-.16-3.1-1.12-6.38-2.08-10.24-2.49-32.19-9.31-52.32-28.64C14.5,124.7,6.66,106.84,3.18,97.09c-1.06-4.28-2.12-8.56-3.18-12.84.59,15.65,3.17,28,6.88,37.82l.08.28c5.33,25.54,11.95,50.81,19.84,75.68,3.93-13.26,7.86-26.52,11.8-39.78,0,0,0,0,0,0h.01s0,0,0,0c23.43,12.58,51.61,14.09,51.73,13.62Z"/>
-                </svg>
-            </a>
-
-            <!-- 3. LaForge (Android APK -> Native Windows Desktop Application) -->
-            <a class="dock-link dock-link-laforge"
-               href="https://github.com/blainekyle/LaForge"
-               target="_blank"
-               rel="noopener noreferrer"
-               aria-label="LaForge — Forge Android APKs into Native Windows Apps"
-               style="--accent: #e5b85c;"
-               data-sigil="⬡"
-               data-title="LaForge"
-               data-desc="apk → native win32 forge"
-               data-tag="APP">
-                <img class="dock-ico dock-ico-wide" src="assets/laforge-glyph.png" alt="" aria-hidden="true" draggable="false" />
-            </a>
-
-            <!-- 4. prettySNow (Rich Text & Images -> ServiceNow Inline Code) -->
-            <a class="dock-link"
-               href="https://blainekyle.github.io/prettySNow/"
-               target="_blank"
-               rel="noopener noreferrer"
-               aria-label="prettySNow — ServiceNow Inline Code Converter"
-               style="--accent: #a5f3fc;"
-               data-sigil="✳"
-               data-title="prettySNow"
-               data-desc="servicenow inline transmuter"
-               data-tag="LIVE">
-                <svg class="dock-ico" viewBox="0 0 256 256" aria-hidden="true">
-                    <defs>
-                        <mask id="psno-cutout">
-                            <rect width="256" height="256" fill="#ffffff"/>
-                            <g transform="matrix(1.2 0 0 1.2 -26 -24)">
-                                <g transform="matrix(1 0 0 1.35 85 253)" fill="#000000">
-                                    <path d="M97-68H79v-6h10v-38H79v-7h18ZM83-92 48-78v-7l25-10-25-10v-8l35 15zM38-78 3-92v-6l35-15v8L14-95l24 10zM7-68h-18v-51H7v7h-9v38h9Z"/>
-                                </g>
-                            </g>
-                        </mask>
-                    </defs>
-                    <g mask="url(#psno-cutout)" fill="currentColor">
-                        <g transform="matrix(1.2 0 0 1.2 -26 -24)">
-                            <g transform="rotate(-45 130 118) scale(.48)">
-                                <path d="M393 276q-4-20 0-40c6-29 60-36 37-81-33-33-60 1-88-8q-20-6-35-20c-22-20-1-70-51-72-45 12-29 52-51 72q-15 14-35 20c-28 9-61-34-88 8-12 45 31 52 37 81q4 20 0 40c-6 29-60 36-37 81 33 33 60-1 88 8q20 6 35 20c22 20 1 70 51 72 45-12 29-52 51-72q15-14 35-20c28-9 61 34 88-8 12-45-31-52-37-81"/>
-                                <path d="M181 126a33 33 0 1 0-33-58 33 33 0 0 0 33 58"/>
-                                <path d="M331 386a33 33 0 1 0 33 57 33 33 0 0 0-33-57"/>
-                                <path d="M106 256a33 33 0 1 0-67 0 33 33 0 0 0 67 0"/>
-                                <path d="M473 256a33 33 0 1 0-67 0 33 33 0 0 0 67 0"/>
-                                <path d="M181 386a33 33 0 1 0-33 58 33 33 0 0 0 33-58"/>
-                                <path d="M331 126a33 33 0 1 0 33-57 33 33 0 0 0-33 57"/>
-                            </g>
-                        </g>
-                    </g>
-                </svg>
-            </a>
-
-            <!-- 5. PivotPad (List -> Copyable CSV Pivot Utility) -->
-            <a class="dock-link"
-               href="https://blainekyle.github.io/PivotPad/"
-               target="_blank"
-               rel="noopener noreferrer"
-               aria-label="PivotPad — List to CSV Matrix Pivot"
-               style="--accent: #60a5fa;"
-               data-sigil="⊞"
-               data-title="PivotPad"
-               data-desc="list → csv matrix pivot"
-               data-tag="LIVE">
-                <svg class="dock-ico" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true">
-                    <rect x="4" y="4" width="40" height="40" rx="3"/>
-                    <path d="M14 4V44" stroke-linecap="round"/>
-                    <path d="M4 14H44" stroke-linecap="round"/>
-                    <path d="M20 34H33.5V20" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M24.5 38.5L20 34L24.5 29.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M29 24.5L33.5 20L38 24.5" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-            </a>
-
-            <!-- 6. AssID-Stripper (CSV AssID Stripper) -->
-            <a class="dock-link"
-               href="https://blainekyle.github.io/AssID-Stripper/"
-               target="_blank"
-               rel="noopener noreferrer"
-               aria-label="AssID-Stripper — CSV Identifier Stripper"
-               style="--accent: #86efac;"
-               data-sigil="⌿"
-               data-title="AssID-Stripper"
-               data-desc="csv identifier excision"
-               data-tag="LIVE">
-                <svg class="dock-ico" viewBox="0 0 512 512" fill="currentColor" aria-hidden="true">
-                    <path d="M497.088,14.909C487.471,5.296,474.688,0,461.092,0c-13.599,0-26.385,5.298-36.002,14.915L224.449,215.553l25.242,25.242l-22.799,22.799c-9.338-5.547-20.025-8.512-31.168-8.512c-16.344,0-31.71,6.364-43.267,17.923L17.921,407.539c-23.858,23.859-23.859,62.679-0.003,86.535C29.476,505.632,44.841,511.999,61.186,512c16.342,0,31.709-6.366,43.268-17.926l134.532-134.533c20.146-20.143,23.279-50.959,9.401-74.427l22.81-22.81l25.246,25.246l200.643-200.64C516.934,67.065,516.936,34.766,497.088,14.909z M217.481,338.032L82.949,472.566c-5.815,5.814-13.543,9.017-21.761,9.017c-8.219-0.001-15.947-3.202-21.759-9.017c-11.997-11.997-11.997-31.519,0.002-43.519l134.533-134.533c5.813-5.812,13.541-9.014,21.759-9.014c2.798,0,5.537,0.379,8.165,1.098L62.973,427.516l21.509,21.508L225.38,308.123C228.196,318.439,225.569,329.945,217.481,338.032z M475.58,65.403L296.445,244.535l-28.979-28.982L446.599,36.421c3.871-3.871,9.019-6.004,14.493-6.004c5.472,0,10.619,2.132,14.487,5.999C483.568,44.41,483.569,57.413,475.58,65.403z"/>
-                </svg>
-            </a>
+        <div class="dock" id="projectDock">
+            <div id="dockItems"></div>
 
             <span class="dock-sep" aria-hidden="true"></span>
 
@@ -412,16 +306,281 @@
     </nav>
 
     <script>
-        // --- Dock Hover Caption Controller ---
-        (function initDockCaption() {
+        // --- Dynamic GitHub Pinned Repositories Dock & Caption Controller ---
+        (function initDynamicDock() {
+            const GH_USER = 'blainekyle';
+            const CACHE_KEY = 'bk_pinned_dock_v2';
+            const REPO_META_SESSION_KEY = 'bk_gh_repos_meta_v2';
+            const ICON_DISCOVERY_PREFIX = 'bk_repo_icon_v1:';
+
+            const dock = document.getElementById('projectDock');
+            const dockItemsEl = document.getElementById('dockItems');
             const caption = document.getElementById('dockCaption');
             const capSigil = document.getElementById('capSigil');
             const capTitle = document.getElementById('capTitle');
             const capDesc = document.getElementById('capDesc');
             const capTag = document.getElementById('capTag');
-            const links = document.querySelectorAll('.dock-link');
+
+            let activeHoverLink = null;
+            let currentFingerprint = '';
+
+            // Curated artwork, accent colors, sigils & cryptic captions for known repos
+            const REPO_REGISTRY = {
+                'laforge': {
+                    title: 'LaForge',
+                    aria: 'LaForge — Forge Android APKs into Native Windows Apps',
+                    accent: '#e5b85c',
+                    sigil: '⬡',
+                    desc: 'apk → native win32 forge',
+                    tag: 'APP',
+                    extraClass: 'dock-link-laforge',
+                    iconHtml: '<img class="dock-ico dock-ico-wide" src="assets/laforge-glyph.png" alt="" aria-hidden="true" draggable="false" />'
+                },
+                'pivotpad': {
+                    title: 'PivotPad',
+                    aria: 'PivotPad — List to CSV Matrix Pivot',
+                    accent: '#60a5fa',
+                    sigil: '⊞',
+                    desc: 'list → csv matrix pivot',
+                    tag: 'LIVE',
+                    href: 'https://blainekyle.github.io/PivotPad/',
+                    iconHtml: `<svg class="dock-ico" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true">
+                        <rect x="4" y="4" width="40" height="40" rx="3"/>
+                        <path d="M14 4V44" stroke-linecap="round"/>
+                        <path d="M4 14H44" stroke-linecap="round"/>
+                        <path d="M20 34H33.5V20" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M24.5 38.5L20 34L24.5 29.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M29 24.5L33.5 20L38 24.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>`
+                },
+                'prettysnow': {
+                    title: 'prettySNow',
+                    aria: 'prettySNow — ServiceNow Inline Code Converter',
+                    accent: '#a5f3fc',
+                    sigil: '✳',
+                    desc: 'servicenow inline transmuter',
+                    tag: 'LIVE',
+                    href: 'https://blainekyle.github.io/prettySNow/',
+                    iconHtml: `<svg class="dock-ico" viewBox="0 0 256 256" aria-hidden="true">
+                        <defs>
+                            <mask id="psno-cutout">
+                                <rect width="256" height="256" fill="#ffffff"/>
+                                <g transform="matrix(1.2 0 0 1.2 -26 -24)">
+                                    <g transform="matrix(1 0 0 1.35 85 253)" fill="#000000">
+                                        <path d="M97-68H79v-6h10v-38H79v-7h18ZM83-92 48-78v-7l25-10-25-10v-8l35 15zM38-78 3-92v-6l35-15v8L14-95l24 10zM7-68h-18v-51H7v7h-9v38h9Z"/>
+                                    </g>
+                                </g>
+                            </mask>
+                        </defs>
+                        <g mask="url(#psno-cutout)" fill="currentColor">
+                            <g transform="matrix(1.2 0 0 1.2 -26 -24)">
+                                <g transform="rotate(-45 130 118) scale(.48)">
+                                    <path d="M393 276q-4-20 0-40c6-29 60-36 37-81-33-33-60 1-88-8q-20-6-35-20c-22-20-1-70-51-72-45 12-29 52-51 72q-15 14-35 20c-28 9-61-34-88 8-12 45 31 52 37 81q4 20 0 40c-6 29-60 36-37 81 33 33 60-1 88 8q20 6 35 20c22 20 1 70 51 72 45-12 29-52 51-72q15-14 35-20c28-9 61 34 88-8 12-45-31-52-37-81"/>
+                                    <path d="M181 126a33 33 0 1 0-33-58 33 33 0 0 0 33 58"/>
+                                    <path d="M331 386a33 33 0 1 0 33 57 33 33 0 0 0-33-57"/>
+                                    <path d="M106 256a33 33 0 1 0-67 0 33 33 0 0 0 67 0"/>
+                                    <path d="M473 256a33 33 0 1 0-67 0 33 33 0 0 0 67 0"/>
+                                    <path d="M181 386a33 33 0 1 0-33 58 33 33 0 0 0 33-58"/>
+                                    <path d="M331 126a33 33 0 1 0 33-57 33 33 0 0 0-33 57"/>
+                                </g>
+                            </g>
+                        </g>
+                    </svg>`
+                },
+                'starlight': {
+                    title: 'Starlight',
+                    aria: 'Starlight — Communal Archive.org Cinema',
+                    accent: '#e5be7a',
+                    sigil: '▲',
+                    desc: 'communal archive cinema',
+                    tag: 'LIVE',
+                    href: 'https://blainekyle.github.io/starlight/',
+                    iconHtml: `<svg class="dock-ico" viewBox="0 0 656.24 591.24" fill="currentColor" aria-hidden="true">
+                        <polygon points="0 330.38 189.07 391.81 189.07 590.61 305.93 429.78 495 491.21 272.48 330.38 495 169.54 305.93 230.97 189.07 70.14 189.07 268.94 0 330.38"/>
+                        <polygon points="548.24 291.58 514.49 299.34 545.78 352.62 536.99 423.48 564.6 388.71 596.4 462.27 584.45 352.62 615.74 284.85 581.99 283.82 570.74 190.72 548.24 291.58"/>
+                        <path d="M297.55,330.37c119.56,86.95,239.12,173.91,358.69,260.86v-53.86s0-95.17,0-95.17v-98s0-121.34,0-121.34v-59.67s0-30.81,0-30.81v-62.86c-119.56,86.95-239.13,173.91-358.69,260.86ZM638.24,555.37l-135-100.86v-248.28s135-100.86,135-100.86v450Z"/>
+                    </svg>`
+                },
+                'mink': {
+                    title: 'minK',
+                    aria: 'minK — Offline Code Editor with Live Web Preview',
+                    accent: '#38bdf8',
+                    sigil: '◈',
+                    desc: 'offline code & live preview',
+                    tag: 'APP',
+                    iconHtml: `<svg class="dock-ico" viewBox="0 0 145.24 198.03" fill="currentColor" aria-hidden="true">
+                        <path d="M63.06,44.73l2.89,1.89c-4.23-.17-7.87,4.4-6.93,8.52.94,4.13,5.97,6.69,9.93,5.19,3.96-1.5,6.06-6.54,4.51-10.48-1.54-3.94-6.32-6.21-10.4-5.13Z"/>
+                        <path d="M139.41,63.26c-7-14.07-14.16-28.39-25.07-39.69C96.13,4.7,67.91-3.81,42.26,1.61c-11.1,2.34-21.86,7.25-29.9,15.26C4.32,24.88-.74,36.18.09,47.5c1.3,17.73,16.04,31.5,31.37,40.51,14.63,8.59,30.76,14.63,47.44,17.75,9.82,1.84,20.52,2.55,29.31-2.2,5.49-2.97,9.7-7.8,13.79-12.53,7.75-8.96,15.49-17.93,23.24-26.89l-5.83-.88ZM87.15,90.41c-8.35,3.73-18.14,3.32-26.8.4-13.94-4.7-25.64-16.1-29.91-30.17-4.27-14.08-.65-30.46,9.74-40.87s27.31-13.98,40.72-7.95l-8.04-1.29c19.39,5.83,33.9,25.11,34.13,45.35.16,14.06-7.01,28.8-19.84,34.54Z"/>
+                        <path d="M90.32,171.87c.04-.16-3.1-1.12-6.38-2.08-10.24-2.49-32.19-9.31-52.32-28.64C14.5,124.7,6.66,106.84,3.18,97.09c-1.06-4.28-2.12-8.56-3.18-12.84.59,15.65,3.17,28,6.88,37.82l.08.28c5.33,25.54,11.95,50.81,19.84,75.68,3.93-13.26,7.86-26.52,11.8-39.78,0,0,0,0,0,0h.01s0,0,0,0c23.43,12.58,51.61,14.09,51.73,13.62Z"/>
+                    </svg>`
+                },
+                '0app': {
+                    title: '0app',
+                    aria: '0app — Zero-Bloat Config-Driven Web & Local-HTML App Container',
+                    accent: '#34d399',
+                    sigil: '⊘',
+                    desc: 'zero-bloat web & apk container',
+                    tag: 'APP',
+                    iconHtml: `<svg class="dock-ico" viewBox="0 0 100 100" fill="none" stroke="currentColor" aria-hidden="true">
+                        <rect x="8" y="8" width="84" height="84" rx="20" stroke-width="5.2" opacity="0.72"/>
+                        <rect x="29" y="22" width="42" height="56" rx="21" stroke-width="9.5"/>
+                        <line x1="36.5" y1="63.5" x2="63.5" y2="36.5" stroke-width="6.5" stroke-linecap="round"/>
+                    </svg>`
+                },
+                'assid-stripper': {
+                    title: 'AssID-Stripper',
+                    aria: 'AssID-Stripper — CSV Identifier Stripper',
+                    accent: '#86efac',
+                    sigil: '⌿',
+                    desc: 'csv identifier excision',
+                    tag: 'LIVE',
+                    href: 'https://blainekyle.github.io/AssID-Stripper/',
+                    iconHtml: `<svg class="dock-ico" viewBox="0 0 512 512" fill="currentColor" aria-hidden="true">
+                        <path d="M497.088,14.909C487.471,5.296,474.688,0,461.092,0c-13.599,0-26.385,5.298-36.002,14.915L224.449,215.553l25.242,25.242l-22.799,22.799c-9.338-5.547-20.025-8.512-31.168-8.512c-16.344,0-31.71,6.364-43.267,17.923L17.921,407.539c-23.858,23.859-23.859,62.679-0.003,86.535C29.476,505.632,44.841,511.999,61.186,512c16.342,0,31.709-6.366,43.268-17.926l134.532-134.533c20.146-20.143,23.279-50.959,9.401-74.427l22.81-22.81l25.246,25.246l200.643-200.64C516.934,67.065,516.936,34.766,497.088,14.909z M217.481,338.032L82.949,472.566c-5.815,5.814-13.543,9.017-21.761,9.017c-8.219-0.001-15.947-3.202-21.759-9.017c-11.997-11.997-11.997-31.519,0.002-43.519l134.533-134.533c5.813-5.812,13.541-9.014,21.759-9.014c2.798,0,5.537,0.379,8.165,1.098L62.973,427.516l21.509,21.508L225.38,308.123C228.196,318.439,225.569,329.945,217.481,338.032z M475.58,65.403L296.445,244.535l-28.979-28.982L446.599,36.421c3.871-3.871,9.019-6.004,14.493-6.004c5.472,0,10.619,2.132,14.487,5.999C483.568,44.41,483.569,57.413,475.58,65.403z"/>
+                    </svg>`
+                },
+                'xix': {
+                    title: 'XIX',
+                    aria: 'XIX — X-Input Gamepad Synthesizer Experiment',
+                    accent: '#f472b6',
+                    sigil: '✦',
+                    desc: 'x-input gamepad synth & looper',
+                    tag: 'LIVE',
+                    href: 'https://blainekyle.github.io/XIX/',
+                    iconHtml: `<svg class="dock-ico" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true">
+                        <rect x="5" y="13" width="38" height="22" rx="11"/>
+                        <path d="M16 20V28M12 24H20" stroke-linecap="round"/>
+                        <circle cx="31" cy="21" r="1.8" fill="currentColor"/>
+                        <circle cx="35" cy="25" r="1.8" fill="currentColor"/>
+                    </svg>`
+                },
+                'subjectivity-probe': {
+                    title: 'Subjectivity Probe',
+                    aria: 'Subjectivity Probe — Simulated Consciousness Diagnostic',
+                    accent: '#a78bfa',
+                    sigil: '◉',
+                    desc: 'simulated consciousness probe',
+                    tag: 'LIVE',
+                    href: 'https://blainekyle.github.io/Subjectivity-Probe/',
+                    iconHtml: `<svg class="dock-ico" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true">
+                        <path d="M4 24C9.5 14 16.5 10 24 10C31.5 10 38.5 14 44 24C38.5 34 31.5 38 24 38C16.5 38 9.5 34 4 24Z" stroke-linejoin="round"/>
+                        <circle cx="24" cy="24" r="6.5"/>
+                        <circle cx="24" cy="24" r="2.2" fill="currentColor"/>
+                    </svg>`
+                }
+            };
+
+            const DEFAULT_FALLBACK_NAMES = [
+                'LaForge',
+                'PivotPad',
+                'prettySNow',
+                'starlight',
+                'minK',
+                '0app'
+            ];
+
+            const FALLBACK_ACCENTS = ['#38bdf8', '#e5be7a', '#34d399', '#f472b6', '#60a5fa', '#a78bfa', '#fb923c', '#a5f3fc'];
+            const FALLBACK_SIGILS = ['◈', '⬡', '▲', '✦', '⊞', '⊘', '✳', '◉'];
+
+            function hashString(str) {
+                let h = 2166136261;
+                for (let i = 0; i < str.length; i++) {
+                    h ^= str.charCodeAt(i);
+                    h = Math.imul(h, 16777619);
+                }
+                return h >>> 0;
+            }
+
+            function buildProceduralGlyphSvg(name) {
+                const h = hashString(name.toLowerCase());
+                const variant = h % 4;
+                if (variant === 0) {
+                    return `<svg class="dock-ico" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.3" aria-hidden="true">
+                        <polygon points="24,5 41,14.5 41,33.5 24,43 7,33.5 7,14.5" stroke-linejoin="round"/>
+                        <polygon points="24,14 33,24 24,34 15,24" stroke-linejoin="round"/>
+                    </svg>`;
+                } else if (variant === 1) {
+                    return `<svg class="dock-ico" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.3" aria-hidden="true">
+                        <circle cx="24" cy="24" r="18"/>
+                        <polygon points="24,10 36,31 12,31" stroke-linejoin="round"/>
+                        <circle cx="24" cy="25" r="2.5" fill="currentColor"/>
+                    </svg>`;
+                } else if (variant === 2) {
+                    return `<svg class="dock-ico" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.3" aria-hidden="true">
+                        <rect x="8" y="8" width="32" height="32" rx="7" transform="rotate(45 24 24)"/>
+                        <circle cx="24" cy="24" r="6"/>
+                    </svg>`;
+                }
+                return `<svg class="dock-ico" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.3" aria-hidden="true">
+                    <path d="M24 5L42 24L24 43L6 24Z" stroke-linejoin="round"/>
+                    <path d="M15 24H33M24 15V33" stroke-linecap="round"/>
+                </svg>`;
+            }
+
+            function summarizeDescription(rawDesc, fallbackName) {
+                if (!rawDesc || typeof rawDesc !== 'string') return fallbackName.toLowerCase();
+                let cleaned = rawDesc.trim().replace(/\.+$/, '').replace(/\s+/g, ' ').toLowerCase();
+                if (cleaned.length <= 40) return cleaned;
+                const cut = cleaned.slice(0, 39);
+                const lastSpace = cut.lastIndexOf(' ');
+                return (lastSpace > 18 ? cut.slice(0, lastSpace) : cut) + '…';
+            }
+
+            function normalizePinnedItem(rawItem, repoMetaMap) {
+                const rawName = (typeof rawItem === 'string' ? rawItem : rawItem.name) || '';
+                const key = rawName.toLowerCase();
+                const preset = REPO_REGISTRY[key];
+                const meta = (repoMetaMap && repoMetaMap.get(key)) || {};
+
+                const owner = (rawItem && rawItem.author) || (meta.owner && meta.owner.login) || GH_USER;
+                const canonicalName = meta.name || rawName;
+                const hasPages = Boolean(meta.has_pages || (rawItem && rawItem.hasPages));
+                const liveHomepage = (meta.homepage && meta.homepage.trim())
+                    || (rawItem && rawItem.homepage && rawItem.homepage.trim())
+                    || (hasPages ? `https://${owner}.github.io/${canonicalName}/` : '');
+                const repoUrl = meta.html_url || (rawItem && rawItem.repoUrl) || `https://github.com/${owner}/${canonicalName}`;
+
+                const href = (preset && preset.href) || liveHomepage || repoUrl;
+                const tag = (preset && preset.tag) || (liveHomepage ? 'LIVE' : 'APP');
+                const title = (preset && preset.title) || canonicalName;
+                const rawDesc = meta.description || (rawItem && rawItem.description) || '';
+                const desc = (preset && preset.desc) || summarizeDescription(rawDesc, canonicalName);
+
+                const h = hashString(key);
+                const accent = (preset && preset.accent) || FALLBACK_ACCENTS[h % FALLBACK_ACCENTS.length];
+                const sigil = (preset && preset.sigil) || FALLBACK_SIGILS[h % FALLBACK_SIGILS.length];
+                const aria = (preset && preset.aria) || (rawDesc ? `${title} — ${rawDesc}` : title);
+                const extraClass = (preset && preset.extraClass) || '';
+
+                let discoveredIconUrl = null;
+                if (!preset) {
+                    try { discoveredIconUrl = localStorage.getItem(ICON_DISCOVERY_PREFIX + key); } catch {}
+                }
+
+                const iconHtml = (preset && preset.iconHtml)
+                    || (discoveredIconUrl && discoveredIconUrl !== 'none'
+                        ? `<img class="dock-ico dock-ico-auto" src="${discoveredIconUrl}" alt="" aria-hidden="true" draggable="false" />`
+                        : buildProceduralGlyphSvg(canonicalName));
+
+                return {
+                    key,
+                    owner,
+                    repoName: canonicalName,
+                    isCustomUnknown: !preset,
+                    title,
+                    aria,
+                    href,
+                    accent,
+                    sigil,
+                    desc,
+                    tag,
+                    extraClass,
+                    iconHtml
+                };
+            }
 
             function showCaption(el) {
+                if (!el) return;
                 const accent = el.style.getPropertyValue('--accent') || '#ffffff';
                 caption.style.setProperty('--cap-accent', accent.trim());
                 capSigil.textContent = el.dataset.sigil || '▲';
@@ -435,14 +594,230 @@
                 caption.classList.remove('is-visible');
             }
 
-            links.forEach((link) => {
-                link.addEventListener('mouseenter', () => showCaption(link));
-                link.addEventListener('mouseleave', hideCaption);
-                link.addEventListener('focus', () => showCaption(link));
-                link.addEventListener('blur', hideCaption);
+            // Delegated hover & keyboard focus listeners for dynamic + static dock items
+            dock.addEventListener('mouseover', (e) => {
+                const link = e.target.closest('.dock-link');
+                if (link && dock.contains(link)) {
+                    activeHoverLink = link;
+                    showCaption(link);
+                }
+            });
+
+            dock.addEventListener('mouseout', (e) => {
+                const link = e.target.closest('.dock-link');
+                if (link && (!e.relatedTarget || !link.contains(e.relatedTarget))) {
+                    if (activeHoverLink === link) activeHoverLink = null;
+                    hideCaption();
+                }
+            });
+
+            dock.addEventListener('focusin', (e) => {
+                const link = e.target.closest('.dock-link');
+                if (link && dock.contains(link)) {
+                    activeHoverLink = link;
+                    showCaption(link);
+                }
+            });
+
+            dock.addEventListener('focusout', (e) => {
+                const link = e.target.closest('.dock-link');
+                if (link && (!e.relatedTarget || !link.contains(e.relatedTarget))) {
+                    if (activeHoverLink === link) activeHoverLink = null;
+                    hideCaption();
+                }
+            });
+
+            function renderDockItems(items) {
+                const nextFingerprint = JSON.stringify(items.map((it) => [it.key, it.href, it.title, it.desc, it.tag, it.accent, it.iconHtml]));
+                if (nextFingerprint === currentFingerprint) return;
+                currentFingerprint = nextFingerprint;
+
+                const hoveredKey = activeHoverLink && activeHoverLink.dataset ? activeHoverLink.dataset.repoKey : null;
+                const frag = document.createDocumentFragment();
+
+                for (const item of items) {
+                    const a = document.createElement('a');
+                    a.className = item.extraClass ? `dock-link ${item.extraClass}` : 'dock-link';
+                    a.href = item.href;
+                    a.target = '_blank';
+                    a.rel = 'noopener noreferrer';
+                    a.setAttribute('aria-label', item.aria);
+                    a.style.setProperty('--accent', item.accent);
+                    a.dataset.repoKey = item.key;
+                    a.dataset.sigil = item.sigil;
+                    a.dataset.title = item.title;
+                    a.dataset.desc = item.desc;
+                    a.dataset.tag = item.tag;
+                    a.innerHTML = item.iconHtml;
+                    frag.appendChild(a);
+                }
+
+                dockItemsEl.replaceChildren(frag);
+
+                if (hoveredKey) {
+                    const replacement = dockItemsEl.querySelector(`[data-repo-key="${CSS.escape(hoveredKey)}"]`);
+                    if (replacement) {
+                        activeHoverLink = replacement;
+                        showCaption(replacement);
+                    }
+                }
+            }
+
+            async function fetchWithTimeout(url, timeoutMs = 4500, options = {}) {
+                const ctrl = new AbortController();
+                const timer = setTimeout(() => ctrl.abort(), timeoutMs);
+                try {
+                    return await fetch(url, { ...options, signal: ctrl.signal });
+                } finally {
+                    clearTimeout(timer);
+                }
+            }
+
+            function parsePinnedFromProfileHtml(html) {
+                const doc = new DOMParser().parseFromString(html, 'text/html');
+                const cards = doc.querySelectorAll('.pinned-item-list-item, .js-pinned-item-list-item');
+                const items = [];
+                cards.forEach((card) => {
+                    const repoSpan = card.querySelector('.repo');
+                    const name = repoSpan ? repoSpan.textContent.trim() : '';
+                    if (!name) return;
+                    const ownerSpan = card.querySelector('.owner');
+                    const author = ownerSpan ? ownerSpan.textContent.trim().replace(/\/$/, '') : GH_USER;
+                    const descEl = card.querySelector('.pinned-item-desc');
+                    const description = descEl ? descEl.textContent.trim() : '';
+                    items.push({ author, name, description });
+                });
+                return items;
+            }
+
+            async function fetchLivePinnedList() {
+                // 1. Primary real-time CORS JSON endpoint reflecting live github.com/blainekyle pins
+                try {
+                    const res = await fetchWithTimeout(`https://pinned.berrysauce.dev/get/${GH_USER}`, 4500);
+                    if (res.ok) {
+                        const data = await res.json();
+                        if (Array.isArray(data) && data.length > 0) return data;
+                    }
+                } catch {}
+
+                // 2. Secondary real-time HTML scrape of github.com/blainekyle via CORS relays
+                const htmlProxies = [
+                    `https://corsproxy.io/?url=${encodeURIComponent(`https://github.com/${GH_USER}`)}`,
+                    `https://api.allorigins.win/raw?url=${encodeURIComponent(`https://github.com/${GH_USER}`)}`
+                ];
+                for (const proxyUrl of htmlProxies) {
+                    try {
+                        const res = await fetchWithTimeout(proxyUrl, 5000);
+                        if (res.ok) {
+                            const html = await res.text();
+                            const parsed = parsePinnedFromProfileHtml(html);
+                            if (parsed.length > 0) return parsed;
+                        }
+                    } catch {}
+                }
+
+                // 3. Tertiary self-hosted snapshot (auto-synced by GitHub Actions in this repo)
+                try {
+                    const res = await fetchWithTimeout('assets/pinned.json', 3000, { cache: 'no-cache' });
+                    if (res.ok) {
+                        const snap = await res.json();
+                        if (snap && Array.isArray(snap.pinned) && snap.pinned.length > 0) return snap.pinned;
+                    }
+                } catch {}
+
+                return null;
+            }
+
+            async function fetchGitHubRepoMap() {
+                try {
+                    const cached = sessionStorage.getItem(REPO_META_SESSION_KEY);
+                    if (cached) {
+                        const parsed = JSON.parse(cached);
+                        if (parsed && Date.now() - parsed.ts < 5 * 60 * 1000 && Array.isArray(parsed.repos)) {
+                            return new Map(parsed.repos.map((r) => [r.name.toLowerCase(), r]));
+                        }
+                    }
+                } catch {}
+
+                try {
+                    const res = await fetchWithTimeout(`https://api.github.com/users/${GH_USER}/repos?per_page=100`, 4500, {
+                        headers: { 'Accept': 'application/vnd.github+json' }
+                    });
+                    if (res.ok) {
+                        const repos = await res.json();
+                        if (Array.isArray(repos)) {
+                            try {
+                                sessionStorage.setItem(REPO_META_SESSION_KEY, JSON.stringify({ ts: Date.now(), repos }));
+                            } catch {}
+                            return new Map(repos.map((r) => [r.name.toLowerCase(), r]));
+                        }
+                    }
+                } catch {}
+                return new Map();
+            }
+
+            // Optional zero-config icon auto-discovery for brand-new future pinned repositories
+            async function discoverUnknownRepoIcons(items) {
+                const unknowns = items.filter((it) => it.isCustomUnknown);
+                if (unknowns.length === 0) return;
+
+                let updated = false;
+                for (const it of unknowns) {
+                    let cached = null;
+                    try { cached = localStorage.getItem(ICON_DISCOVERY_PREFIX + it.key); } catch {}
+                    if (cached) continue;
+
+                    try {
+                        const res = await fetchWithTimeout(`https://api.github.com/repos/${it.owner}/${it.repoName}/contents`, 4000, {
+                            headers: { 'Accept': 'application/vnd.github+json' }
+                        });
+                        if (!res.ok) continue;
+                        const files = await res.json();
+                        if (!Array.isArray(files)) continue;
+
+                        const iconCandidate = files.find((f) => f.type === 'file' && /(glyph|logo|icon|ico).*\.(svg|png)$/i.test(f.name))
+                            || files.find((f) => f.type === 'file' && /\.svg$/i.test(f.name));
+
+                        const foundUrl = iconCandidate && iconCandidate.download_url ? iconCandidate.download_url : 'none';
+                        try { localStorage.setItem(ICON_DISCOVERY_PREFIX + it.key, foundUrl); } catch {}
+
+                        if (foundUrl !== 'none') {
+                            it.iconHtml = `<img class="dock-ico dock-ico-auto" src="${foundUrl}" alt="" aria-hidden="true" draggable="false" />`;
+                            updated = true;
+                        }
+                    } catch {}
+                }
+                if (updated) renderDockItems(items);
+            }
+
+            // Step 1: Instant zero-flash initial render from localStorage cache or baseline defaults
+            let initialRaw = null;
+            try {
+                const cachedRaw = localStorage.getItem(CACHE_KEY);
+                if (cachedRaw) {
+                    const parsed = JSON.parse(cachedRaw);
+                    if (Array.isArray(parsed) && parsed.length > 0) initialRaw = parsed;
+                }
+            } catch {}
+
+            const seedItems = (initialRaw || DEFAULT_FALLBACK_NAMES).map((r) => normalizePinnedItem(r, null));
+            renderDockItems(seedItems);
+
+            // Step 2: Live parallel fetch of current GitHub profile pins + official repo metadata
+            Promise.all([fetchLivePinnedList(), fetchGitHubRepoMap()]).then(([livePinned, repoMap]) => {
+                const sourceList = (livePinned && livePinned.length > 0) ? livePinned : (initialRaw || DEFAULT_FALLBACK_NAMES);
+                const normalized = sourceList.map((r) => normalizePinnedItem(r, repoMap));
+                renderDockItems(normalized);
+
+                if (livePinned && livePinned.length > 0) {
+                    try {
+                        localStorage.setItem(CACHE_KEY, JSON.stringify(livePinned));
+                    } catch {}
+                }
+
+                discoverUnknownRepoIcons(normalized);
             });
         })();
-
         // --- Canvas Setup (High-DPI aware) ---
         const canvas = document.getElementById('wallpaperCanvas');
         const ctx = canvas.getContext('2d', { alpha: false });

@@ -1,6 +1,6 @@
 {
   "username": "blainekyle",
-  "updatedAt": "2026-10-31T02:52:37.753Z",
+  "updatedAt": "2026-11-03T00:57:09.938Z",
   "pinned": [
     {
       "author": "blainekyle",
@@ -11,16 +11,6 @@
       "hasPages": false,
       "homepage": "",
       "repoUrl": "https://github.com/blainekyle/LaForge"
-    },
-    {
-      "author": "blainekyle",
-      "name": "PivotPad",
-      "description": "This is my quick pivot pad for pivoting your lists to a quick copyable CSV output",
-      "language": "HTML",
-      "languageColor": "",
-      "hasPages": true,
-      "homepage": "https://blainekyle.github.io/PivotPad/",
-      "repoUrl": "https://github.com/blainekyle/PivotPad"
     },
     {
       "author": "blainekyle",
@@ -61,6 +51,16 @@
       "hasPages": false,
       "homepage": "",
       "repoUrl": "https://github.com/blainekyle/0app"
+    },
+    {
+      "author": "blainekyle",
+      "name": "bkx",
+      "description": "Native Win32 C web-app master control center, on-demand shared Electron applet runtime, 0app companion, workflow automation engine, and multi-tunnel OpenConnect + Duo VPN manager for Windows.",
+      "language": "TypeScript",
+      "languageColor": "",
+      "hasPages": false,
+      "homepage": "",
+      "repoUrl": "https://github.com/blainekyle/bkx"
     }
   ]
 }

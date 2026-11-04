@@ -1,6 +1,6 @@
 {
   "username": "blainekyle",
-  "updatedAt": "2026-11-03T00:57:09.938Z",
+  "updatedAt": "2026-11-04T06:20:29.613Z",
   "pinned": [
     {
       "author": "blainekyle",
@@ -11,16 +11,6 @@
       "hasPages": false,
       "homepage": "",
       "repoUrl": "https://github.com/blainekyle/LaForge"
-    },
-    {
-      "author": "blainekyle",
-      "name": "prettySNow",
-      "description": "Converts rich text and images to ServiceNow-friendly inline code.",
-      "language": "HTML",
-      "languageColor": "",
-      "hasPages": true,
-      "homepage": "https://blainekyle.github.io/prettySNow/",
-      "repoUrl": "https://github.com/blainekyle/prettySNow"
     },
     {
       "author": "blainekyle",
@@ -61,6 +51,16 @@
       "hasPages": false,
       "homepage": "",
       "repoUrl": "https://github.com/blainekyle/bkx"
+    },
+    {
+      "author": "blainekyle",
+      "name": "Snowcow",
+      "description": "Rich-text workspace, ServiceNow [code] bridge, and minP image compression studio inside Chrome's Side Panel.",
+      "language": "JavaScript",
+      "languageColor": "",
+      "hasPages": false,
+      "homepage": "",
+      "repoUrl": "https://github.com/blainekyle/Snowcow"
     }
   ]
 }

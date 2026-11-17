@@ -268,10 +268,127 @@
                 height: 28px;
             }
         }
+
+        /* --- Dextra Corner Teaser (Integer-Scaled Pixel Art & 8x12 Bitmap Font) --- */
+        :root {
+            --dextra-scale: 2;
+        }
+
+        @media (min-width: 1800px) and (min-height: 900px) {
+            :root {
+                --dextra-scale: 3;
+            }
+        }
+
+        @media (min-width: 2800px) and (min-height: 1300px) {
+            :root {
+                --dextra-scale: 4;
+            }
+        }
+
+        .dextra-teaser {
+            position: fixed;
+            right: clamp(16px, 2.4vw, 36px);
+            bottom: clamp(16px, 3vh, 30px);
+            z-index: 18;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            pointer-events: none;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        @media (max-width: 1120px) {
+            .dextra-teaser {
+                bottom: clamp(86px, 12vh, 114px);
+            }
+        }
+
+        .dextra-nanodrones {
+            width: calc(64px * var(--dextra-scale));
+            height: calc(64px * var(--dextra-scale));
+            margin-bottom: calc(-4px * var(--dextra-scale));
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+            opacity: 0;
+            transition: opacity 0.9s ease;
+            pointer-events: none;
+            display: block;
+        }
+
+        .dextra-teaser.is-revealed .dextra-nanodrones {
+            opacity: 1;
+        }
+
+        .dextra-logo-wrap {
+            position: relative;
+            width: calc(128px * var(--dextra-scale));
+            height: calc(32px * var(--dextra-scale));
+            pointer-events: none;
+        }
+
+        .dextra-logo-wrap.is-replayable {
+            pointer-events: auto;
+            cursor: pointer;
+        }
+
+        .dextra-logo-img,
+        .dextra-logo-canvas {
+            position: absolute;
+            inset: 0;
+            width: calc(128px * var(--dextra-scale));
+            height: calc(32px * var(--dextra-scale));
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+            display: block;
+        }
+
+        .dextra-logo-canvas.is-active + .dextra-logo-img {
+            visibility: hidden;
+        }
+
+        .dextra-coming-soon {
+            width: calc(98px * var(--dextra-scale));
+            height: calc(12px * var(--dextra-scale));
+            margin-top: calc(2px * var(--dextra-scale));
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+            opacity: 0;
+            transition: opacity 0.9s ease;
+            pointer-events: none;
+            display: block;
+        }
+
+        .dextra-teaser.is-revealed .dextra-coming-soon {
+            opacity: 0.92;
+        }
     </style>
 </head>
 <body>
     <canvas id="wallpaperCanvas"></canvas>
+
+    <aside class="dextra-teaser" id="dextraTeaser" aria-label="Dextra — Coming Soon">
+        <img id="dextraNanodrones"
+             class="dextra-nanodrones"
+             src="assets/dextra/nanodrones.gif"
+             alt=""
+             aria-hidden="true"
+             draggable="false" />
+        <div class="dextra-logo-wrap" id="dextraLogoWrap">
+            <canvas id="dextraLogoCanvas" class="dextra-logo-canvas" width="128" height="32" aria-hidden="true"></canvas>
+            <img id="dextraLogoImg"
+                 class="dextra-logo-img"
+                 src="assets/dextra/dextra-logo-static_pre-ani.png"
+                 alt="Dextra"
+                 draggable="false" />
+        </div>
+        <canvas id="dextraComingSoon"
+                class="dextra-coming-soon"
+                width="98"
+                height="12"
+                aria-label="Coming Soon"></canvas>
+    </aside>
 
     <nav class="dock-stage" aria-label="Projects">
         <div id="dockCaption" class="dock-caption" aria-hidden="true">
@@ -1335,6 +1452,164 @@
         window.addEventListener('resize', syncCanvasMetrics);
 
         animate();
+
+        // --- Dextra Corner Teaser Controller ---
+        (function initDextraTeaser() {
+            const INITIAL_DELAY_MS = 6000;
+            const REPLAY_DELAY_MS = 1000;
+            const FRAME_INTERVAL_MS = 100;
+            const TOTAL_LOGO_FRAMES = 8;
+            const LOGO_W = 128;
+            const LOGO_H = 32;
+
+            const teaserEl = document.getElementById('dextraTeaser');
+            const logoWrapEl = document.getElementById('dextraLogoWrap');
+            const logoImgEl = document.getElementById('dextraLogoImg');
+            const logoCanvas = document.getElementById('dextraLogoCanvas');
+            const textCanvas = document.getElementById('dextraComingSoon');
+            if (!teaserEl || !logoWrapEl || !logoImgEl || !logoCanvas || !textCanvas) return;
+
+            const logoCtx = logoCanvas.getContext('2d');
+            const textCtx = textCanvas.getContext('2d');
+            logoCtx.imageSmoothingEnabled = false;
+            textCtx.imageSmoothingEnabled = false;
+
+            const preImg = new Image();
+            const postImg = new Image();
+            const stripImg = new Image();
+            const fontGridImg = new Image();
+
+            let state = 'initial_wait'; // 'initial_wait' | 'playing' | 'post_hold' | 'replay_wait'
+            let delayTimer = null;
+            let frameTimer = null;
+
+            // Render "COMING SOON" using the 8x12 bitmask pixel font grid (16 cols x 6 rows, ASCII 32..126, 9px xadvance)
+            fontGridImg.onload = () => {
+                const label = 'COMING SOON';
+                const cellW = 8;
+                const cellH = 12;
+                const xAdvance = 9;
+                const cols = 16;
+
+                textCtx.clearRect(0, 0, textCanvas.width, textCanvas.height);
+                textCtx.imageSmoothingEnabled = false;
+
+                for (let i = 0; i < label.length; i++) {
+                    const code = label.charCodeAt(i);
+                    if (code < 32 || code > 126) continue;
+                    const idx = code - 32;
+                    const sx = (idx % cols) * cellW;
+                    const sy = Math.floor(idx / cols) * cellH;
+                    const dx = i * xAdvance;
+                    textCtx.drawImage(fontGridImg, sx, sy, cellW, cellH, dx, 0, cellW, cellH);
+                }
+            };
+            fontGridImg.src = 'assets/dextra/dextra_grid.png';
+
+            function drawStaticImage(img, fallbackSrc) {
+                logoImgEl.src = fallbackSrc;
+                if (img.complete && img.naturalWidth > 0) {
+                    logoCtx.clearRect(0, 0, LOGO_W, LOGO_H);
+                    logoCtx.imageSmoothingEnabled = false;
+                    logoCtx.drawImage(img, 0, 0, LOGO_W, LOGO_H);
+                    logoCanvas.classList.add('is-active');
+                } else {
+                    logoCanvas.classList.remove('is-active');
+                }
+            }
+
+            function drawStripFrame(frameIndex) {
+                if (!stripImg.complete || stripImg.naturalWidth === 0) return;
+                logoCtx.clearRect(0, 0, LOGO_W, LOGO_H);
+                logoCtx.imageSmoothingEnabled = false;
+                logoCtx.drawImage(
+                    stripImg,
+                    frameIndex * LOGO_W,
+                    0,
+                    LOGO_W,
+                    LOGO_H,
+                    0,
+                    0,
+                    LOGO_W,
+                    LOGO_H
+                );
+                logoCanvas.classList.add('is-active');
+            }
+
+            function playReverseLogoAnimation() {
+                clearTimeout(delayTimer);
+                clearInterval(frameTimer);
+
+                if (!stripImg.complete || stripImg.naturalWidth === 0) {
+                    stripImg.onload = () => playReverseLogoAnimation();
+                    return;
+                }
+
+                state = 'playing';
+                logoWrapEl.classList.remove('is-replayable');
+
+                // dextra-logo-ani has 8 frames (0..7); playing in reverse steps 7 -> 6 -> ... -> 0
+                let currentFrame = TOTAL_LOGO_FRAMES - 1;
+                drawStripFrame(currentFrame);
+
+                frameTimer = setInterval(() => {
+                    currentFrame--;
+                    if (currentFrame >= 0) {
+                        drawStripFrame(currentFrame);
+                    } else {
+                        clearInterval(frameTimer);
+                        frameTimer = null;
+                        drawStaticImage(postImg, 'assets/dextra/dextra-logo-static_post-ani.png');
+                        state = 'post_hold';
+                        logoWrapEl.classList.add('is-replayable');
+                        teaserEl.classList.add('is-revealed');
+                    }
+                }, FRAME_INTERVAL_MS);
+            }
+
+            preImg.onload = () => {
+                if (state === 'initial_wait' || state === 'replay_wait') {
+                    drawStaticImage(preImg, 'assets/dextra/dextra-logo-static_pre-ani.png');
+                }
+            };
+            postImg.onload = () => {
+                if (state === 'post_hold') {
+                    drawStaticImage(postImg, 'assets/dextra/dextra-logo-static_post-ani.png');
+                }
+            };
+            preImg.src = 'assets/dextra/dextra-logo-static_pre-ani.png';
+            postImg.src = 'assets/dextra/dextra-logo-static_post-ani.png';
+            stripImg.src = 'assets/dextra/dextra-logo-ani.png';
+
+            // Initial 6-second delay following page load before playing reverse logo animation
+            function scheduleInitialPlay() {
+                clearTimeout(delayTimer);
+                delayTimer = setTimeout(() => {
+                    playReverseLogoAnimation();
+                }, INITIAL_DELAY_MS);
+            }
+
+            if (document.readyState === 'complete') {
+                scheduleInitialPlay();
+            } else {
+                window.addEventListener('load', scheduleInitialPlay, { once: true });
+            }
+
+            // Clicking after the animation has finished resets to pre-ani and replays after a 1s delay
+            logoWrapEl.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (state !== 'post_hold') return;
+
+                state = 'replay_wait';
+                logoWrapEl.classList.remove('is-replayable');
+                drawStaticImage(preImg, 'assets/dextra/dextra-logo-static_pre-ani.png');
+
+                clearTimeout(delayTimer);
+                delayTimer = setTimeout(() => {
+                    playReverseLogoAnimation();
+                }, REPLAY_DELAY_MS);
+            });
+        })();
     </script>
 </body>
 </html>
